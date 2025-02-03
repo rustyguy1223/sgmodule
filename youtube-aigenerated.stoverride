@@ -1,0 +1,43 @@
+name: YouTube (Music) Enhance
+desc: Enable PiP, background playback and translation
+http:
+  mitm:
+    - "-redirector*.googlevideo.com"
+    - "*.googlevideo.com"
+    - "www.youtube.com"
+    - "s.youtube.com"
+    - "youtubei.googleapis.com"
+
+  script:
+    - match: ^https:\/\/youtubei\.googleapis\.com\/youtubei\/v1\/(browse|next|player|search|reel\/reel_watch_sequence|guide|account\/get_setting|get_watch)
+      name: youtube-response
+      type: response
+      require-body: true
+      binary-mode: true
+      timeout: 10
+      engine: auto
+      argument: >-
+        {
+          "lyricLang":"en",
+          "captionLang":"en",
+          "blockUpload":true,
+          "blockImmersive":true,
+          "debug":false
+        }
+
+  rewrite:
+    - (^https?:\/\/[\w-]+\.googlevideo\.com\/(?!dclk_video_ads).+?)&ctier=L(&.+?),ctier,(.+) $1$2$3 302
+    - ^https?:\/\/[\w-]+\.googlevideo\.com\/(?!(dclk_video_ads|videoplayback\?)).+&oad - reject
+    - ^https?:\/\/(www|s)\.youtube\.com\/api\/stats\/ads - reject
+    - ^https?:\/\/(www|s)\.youtube\.com\/(pagead|ptracking) - reject
+    - ^https?:\/\/s\.youtube\.com\/api\/stats\/qoe\?adcontext - reject
+    - ^https?:\/\/[\w-]+\.googlevideo\.com\/initplayback.+&oad - reject
+
+rules:
+  - AND,((DOMAIN-SUFFIX,googlevideo.com),(PROTOCOL,UDP)),REJECT
+  - AND,((DOMAIN,youtubei.googleapis.com),(PROTOCOL,UDP)),REJECT
+
+script-providers:
+  youtube-response:
+    url: https://raw.githubusercontent.com/Maasea/sgmodule/master/Script/Youtube/dist/youtube.response.preview.js
+    interval: 86400
