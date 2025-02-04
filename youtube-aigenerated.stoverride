@@ -22,5 +22,5 @@ http:
     - ^https?:\/\/s\.youtube\.com\/api\/stats\/qoe\?adcontext - reject-200
 script-providers:
   YouTubequguanggao1:
-    url: https://raw.githubusercontent.com/rustyguy1223/sgmodule/master/Script/Youtube/dist/youtube.response.preview.js
+    url: https://raw.githubusercontent.com/rustyguy1223/sgmodule/master/Script/Youtube/dist/youtube.response.preview-vi.js
     interval: 86400
